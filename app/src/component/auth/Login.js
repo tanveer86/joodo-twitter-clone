@@ -1,11 +1,12 @@
 import React from 'react';
+import Axios from 'axios';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             email: props.email,
-            password: '',
+            password: ''
         }
     }
 
@@ -15,7 +16,37 @@ class Login extends React.Component {
 
     inputSubmit = (dataSubmit) => {
         dataSubmit.preventDefault();
-        console.log(this.state)
+        Axios.post("http://127.0.0.1:5000/users/login", {
+            email: this.state.email,
+            password: this.state.password
+        })
+        .then(response => {
+            if(response.data.token){
+                localStorage.setItem("token", response.data.token)
+                userDetails(response.data.token)
+            }else{
+                alert("wrong password")
+            }
+        })
+        .catch(error => {
+            console.log(error)
+        })
+
+        let userDetails = (token) => {
+            Axios.get("http://127.0.0.1:5000/user/details", {
+                headers: {
+                    Authorization: "Bearer " + token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log(response.data)
+                localStorage.setItem("userData", JSON.stringify(response.data))
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
     }
 
     render() {

@@ -113,10 +113,14 @@ def joods(user_id):
     page = request.args.get("page", default = 1, type = int)
     user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"following"})
     all_joods = mongo.db.joods.find({"user_id": {"$in": user["following"]}})
-    # took amit's help to calculate this in week 15 day 4
-    total_pages = int(math.ceil(len(str(all_joods))/2))
-    out_put = {"page": page, "per_page": 2, "total": len(str(all_joods)), "total_pages": total_pages, "data": all_joods[(page*2)-2: page*2]}
-    return dumps(out_put)
+
+    joods_count = all_joods.count()
+    joods_limit = 2
+    total_pages = math.ceil(joods_count/joods_limit)
+    joods_show = all_joods.skip((page - 1) * joods_limit).limit(joods_limit)
+    result = {"page": page, "per_page": joods_limit, "total_pages": total_pages, "total": joods_count, "result": joods_show }
+    
+    return dumps(result)
 
 @app.route('/user/joods/<user_id>')
 def user_joods(user_id):

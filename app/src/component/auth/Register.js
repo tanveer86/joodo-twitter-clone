@@ -1,4 +1,5 @@
 import React from 'react';
+import Axios from 'axios';
 
 class Register extends React.Component {
     constructor(props) {
@@ -6,7 +7,7 @@ class Register extends React.Component {
         this.state = {
             email: props.email,
             name: '',
-            password: '',
+            password: ''
         }
     }
 
@@ -16,7 +17,17 @@ class Register extends React.Component {
 
     inputSubmit = (dataSubmit) => {
         dataSubmit.preventDefault();
-        console.log(this.state)
+        Axios.post("http://127.0.0.1:5000/user/register", {
+            email: this.state.email,
+            name: this.state.name,
+            password: this.state.password
+        })
+        .then(response => {
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log(error)
+        })
     }
 
     render() {

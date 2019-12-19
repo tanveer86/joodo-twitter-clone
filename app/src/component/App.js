@@ -1,13 +1,28 @@
 import React from 'react';
 import Homepage from './home/Homepage';
-import styles from './style.module.css';
+import {Link, BrowserRouter, Route} from 'react-router-dom';
+import OverView from './user/layout/OverView';
 
-const App = () => {
-    return(
-        <React.Fragment>
-            <Homepage />
-        </React.Fragment>
-    )
+class App extends React.Component{
+    constructor(){
+        super();
+        this.state = {
+            token: localStorage.getItem("token")
+        }
+    }
+
+    render(){
+        return(
+            <BrowserRouter>
+                {
+                    this.state.token ?
+                        <Route path="/" exact component={OverView} />
+                    :
+                        <Route path="/" exact component={Homepage} />
+                }
+            </BrowserRouter>
+        )
+    }
 }
 
 export default App;
